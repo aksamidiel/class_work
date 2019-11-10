@@ -39,7 +39,9 @@ def send_email(request, record_id):
             cd = form.cleaned_data
             obj_url = request.build_absolute_uri(obj.get_absolute_url())
             subject = "Owner {} recommends you reading {}".format(cd['my_email'], obj.title)
-            message = "Read {} at {} \n\nAdded comment: {}".format(obj.title, obj_url, cd['comment'])
+            message = "Read {} at {} \n\nAdded comment: {}".format(obj.title,
+                                                                   obj_url,
+                                                                   cd['comment'])
             send_mail(subject, message, 'admin@myblog.com', [cd['address']])
             sent = True
     else:
