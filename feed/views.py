@@ -1,8 +1,10 @@
 from django.shortcuts import render, get_object_or_404
 from feed.models import Record
 from django.views.generic import ListView
-from feed.forms import forms, SendEmailForm
+from feed.forms import forms, SendEmailForm, RecordForm
 from django.core.mail import send_mail
+
+from django.contrib.auth.models import User
 
 
 # Create your views here.
@@ -13,7 +15,7 @@ def all_records(request):
     return render(request, 'list.html', {'records': records})  # возрат в ответе
 
 
-class RecordListView(ListView):
+class RecordListView(ListView):  # получение всех записей
     queryset = Record.objects.all()
     context_object_name = 'records'
     template_name = 'list.html'  # шаблон базовый
@@ -49,3 +51,21 @@ def send_email(request, record_id):
     return render(request, 'send.html', {'record': obj,
                                          'form': form,
                                          'sent': sent})
+
+
+def create_form(request):  # создание формы запроса
+    if request.method == "POST":
+        record_form = RecordForm(data=request.POST)
+        if record_form.is_valid():
+            new_record = record_form.save(commit=False)
+            new_record.author = User.objects.first()   #получение любой первой записи из реляционной БД
+            new_record.slug = new_record.title.replace(' ', '')  #избаввление слага от пробелов
+            new_record.save()
+            return render(request, 'detailed.html',
+                          {'record': new_record})
+        else:
+
+            record_form = RecordForm()
+            return render(request, 'createForm', {"form": record_form})
+
+
