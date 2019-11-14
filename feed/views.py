@@ -27,7 +27,9 @@ def detailed_view(request, yy, mm, dd, slug):
                                pub__year=yy,
                                pub__month=mm,
                                pub__day=dd)
-    return render(request, 'detailed.html', {"record": record})
+    return render(request,
+                  'detailed.html',
+                  {"record": record})
 
 
 # обработчик формы для отправки письма
@@ -68,4 +70,5 @@ def create_form(request):  # создание формы запроса
             record_form = RecordForm()
             return render(request, 'createForm', {"form": record_form})
 
-
+    record_form = RecordForm()
+    return render(request, 'createForm.html', {'form': record_form})
